@@ -1,0 +1,5 @@
+<h1>_{MsgHello}
+
+<ul>
+  $forall Blog _ title created content <- blogEntries
+    <li> #{title}

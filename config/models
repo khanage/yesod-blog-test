@@ -1,0 +1,26 @@
+ -- By default this file is used in Model.hs (which is imported by Foundation.hs)
+
+User
+    ident Text
+    password Text Maybe
+    UniqueUser ident
+    deriving Typeable
+    deriving Show
+Email
+    email Text
+    user UserId Maybe
+    verkey Text Maybe
+    UniqueEmail email
+    deriving Show
+Author
+    name Text
+    user UserId
+    email EmailId
+    UniqueAuthor name
+    deriving Show
+Blog
+    author AuthorId
+    title Text
+    created UTCTime default=now
+    content Text
+    deriving Show
