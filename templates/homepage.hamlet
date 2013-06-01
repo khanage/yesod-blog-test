@@ -1,5 +1,5 @@
 <h1>_{MsgHello}
 
 <ul>
-  $forall Blog _ title created content <- blogEntries
-    <li> #{title}
+  $forall (bid, Blog _ title created content) <- blogEntries
+    <li> <a href=@{BlogR bid}>#{title}</a>

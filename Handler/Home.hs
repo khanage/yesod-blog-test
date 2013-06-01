@@ -13,7 +13,7 @@ import Import
 getHomeR :: Handler RepHtml
 getHomeR = do
     blogEntities <- runDB $ selectList [] [Desc BlogCreated]
-    let blogEntries = entityVal <$> blogEntities
+    let blogEntries = ((,) <$> entityKey <*> entityVal) <$> blogEntities
     defaultLayout $ do
         setTitle "Blogs"
         $(widgetFile "homepage")
