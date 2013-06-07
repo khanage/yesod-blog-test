@@ -12,6 +12,7 @@ import Import
 -- inclined, or create a single monolithic file.
 getHomeR :: Handler RepHtml
 getHomeR = do
+    maid <- maybeAuthId
     blogEntities <- runDB $ selectList [] [Desc BlogCreated]
     let blogEntries = ((,) <$> entityKey <*> entityVal) <$> blogEntities
     defaultLayout $ do

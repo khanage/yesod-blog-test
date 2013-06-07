@@ -1,5 +1,14 @@
 <h1>_{MsgHello}
 
+$maybe _ <- maid
+  <p>
+    <a href=@{AuthR LogoutR}>Logout
+  <p>
+    <a href=@{CreateR}>Create a blog
+$nothing
+  <p>
+    <a href=@{AuthR LoginR}>Click here to login
+
 <ul>
   $forall (bid, Blog _ title created content) <- blogEntries
     <li> <a href=@{BlogR bid}>#{title}</a>
