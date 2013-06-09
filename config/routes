@@ -8,5 +8,6 @@
 
 /view/#BlogId BlogR GET
 
-/edit CreateR GET POST
-/edit/#BlogId EditR GET
+/blogs/edit/ CreateR GET POST
+/blogs/edit/#BlogId EditR GET POST
+/blogs/edit/#BlogId/delete DeleteR POST

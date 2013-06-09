@@ -11,4 +11,11 @@ $nothing
 
 <ul>
   $forall (bid, Blog _ title created content) <- blogEntries
-    <li> <a href=@{BlogR bid}>#{title}</a>
+    <li>
+        <a href=@{BlogR bid}>#{title}</a> 
+        $maybe _ <- maid
+               <form action=@{EditR bid} method=get>
+                     <input type="submit" value="Edit">
+               <form action=@{DeleteR bid} method=post>
+                     <input type="submit" value="Delete">
+         

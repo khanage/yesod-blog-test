@@ -33,7 +33,7 @@ getCreateR = do
     (bemWidget, bemEnc) <- generateFormPost $ blogForm Nothing
     defaultLayout $ do
       setTitle "Editing"
-      $(widgetFile "edit")
+      $(widgetFile "create")
 
 postCreateR :: Handler RepHtml
 postCreateR = do
@@ -45,20 +45,46 @@ postCreateR = do
                                 , uumEmail = "khanage@gmail.com"
                                 , uumAuthorName = "Khan Thompson" }
                   aId <- upsertAuthor uum                                          
-                  now <- liftIO $ getCurrentTime
+                  now <- liftIO getCurrentTime
                   let title = bemTitle bem
                       content = unTextarea $ bemContent bem
                       blog = Blog aId title now content
-                  blogId <- runDB $ insert blog
-                  defaultLayout [whamlet|<p>#{show blog} <p>#{show blogId}|]
+                  _ <- runDB $ insert blog
+                  setMessage $ toHtml $ "Created " ++ show (blogTitle blog)
+                  redirect HomeR
       _ ->
           defaultLayout $ do
             setTitle "Editing"
-            $(widgetFile "edit")
+            $(widgetFile "create")
 
 getEditR :: BlogId -> Handler RepHtml
-getEditR = undefined
+getEditR bid = do
+  blog <- runDB $ get404 bid
+  let bem = BlogEditModel { bemTitle = blogTitle blog, bemContent = Textarea $ blogContent blog }
+  (bemWidget,bemEnc) <- generateFormPost $ blogForm $ Just bem
+  defaultLayout $(widgetFile "edit")
 
+postEditR :: BlogId -> Handler RepHtml
+postEditR bid = do
+  blog <- runDB $ get404 bid
+  -- Todo: authorise
+  ((bemResult,bemWidget),bemEnc) <- runFormPost $ blogForm Nothing
+  case bemResult of
+    FormSuccess bem -> do
+      let title = bemTitle bem
+          content = unTextarea $ bemContent bem
+      runDB $ update bid [BlogTitle =. title, BlogContent =. content]
+      setMessage $ toHtml $ "Updated " ++ show title
+      redirect HomeR
+    _ ->
+      defaultLayout $(widgetFile "edit")
+
+postDeleteR :: BlogId -> Handler RepHtml
+postDeleteR bid = do
+  blog <- runDB $ get404 bid
+  runDB $ delete bid
+  setMessage $ toHtml $ "Deleted " ++ show (blogTitle blog)
+  redirect HomeR
 
 blogForm :: Maybe BlogEditModel -> Form BlogEditModel
 blogForm mbem = renderDivs $ BlogEditModel
